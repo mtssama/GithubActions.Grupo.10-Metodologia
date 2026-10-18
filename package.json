@@ -1,0 +1,13 @@
+{
+  "name": "demo-github-actions",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "http-server public -p 4200 -s",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "http-server": "^14.1.1"
+  }
+}

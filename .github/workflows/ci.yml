@@ -1,0 +1,53 @@
+# ============================================================
+# CI – Equipo 6
+# Quality gate: valida cada pull request contra main con la
+# suite de Playwright antes de permitir el merge.
+# ============================================================
+name: CI
+
+# TRIGGER: se ejecuta al abrir o actualizar un pull request contra main
+on:
+  pull_request:
+    branches: [main]
+  # Permite ejecutarlo a mano desde la pestaña Actions (útil para probar)
+  workflow_dispatch:
+
+jobs:
+  # El nombre del job ("test") es el que se selecciona como check requerido
+  # en la branch protection rule.
+  test:
+    # RUNNER: máquina virtual hospedada por GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Descarga el código del repositorio en el runner
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      # 2. Instala Node y cachea ~/.npm usando package-lock.json como clave
+      - name: Configurar Node.js con cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm   # usa actions/cache por debajo
+
+      # 3. Instalación limpia y reproducible a partir del lockfile
+      - name: Instalar dependencias
+        run: npm ci
+
+      # 4. Descarga los navegadores y las librerías del sistema que necesita Playwright
+      - name: Instalar navegadores de Playwright
+        run: npx playwright install --with-deps
+
+      # 5. Ejecuta la suite; si un test falla, el step falla y el check queda en rojo
+      - name: Ejecutar tests de Playwright
+        run: npx playwright test
+
+      # 6. Publica el reporte HTML aunque los tests fallen (if: always())
+      - name: Subir reporte como artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

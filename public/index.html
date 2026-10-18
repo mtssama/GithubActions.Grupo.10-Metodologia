@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cartelera de cine</title>
+</head>
+<body>
+  <h1>Cartelera de cine</h1>
+  <button id="login">Iniciar sesión</button>
+  <p id="saludo" hidden>¡Bienvenido!</p>
+
+  <script>
+    document.getElementById('login').addEventListener('click', function () {
+      document.getElementById('saludo').hidden = false;
+    });
+  </script>
+</body>
+</html>
